@@ -33,6 +33,10 @@ from signalcollection import SignalCollection
 # ]
 # "sampling_freq" = 1/3 (line 81)
 
+# For Fig S2C, use the above, but then define:
+# data_options["interval_end_hour"] = 15
+# plot_choices["ts/cell_index"] = ["pHluorin_001;42;12"]
+
 # To draw the heatmap in Fig 1E, define:
 # data_options["dataset_name"] = "19972_2021_05_28_flavin_htb2_glucose_limitation_hard_Delft_01_01_htb2mCherry"
 # And define "interval_start_hour" and "interval_end_hour" in such ways to

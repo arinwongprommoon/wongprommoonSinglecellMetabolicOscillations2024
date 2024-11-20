@@ -29,7 +29,7 @@ Users will also need time-series data and classifications of time-series data fr
 
 The `strain_report.py` script from this directory can be adapted to:
 
-- draw a plot showing the fluorescence (flavin or mCherry) of a single cell over time, annotated with birth events (relevant to Figure 1A), or
+- draw a plot showing the fluorescence (flavin or mCherry) of a single cell over time, annotated with birth events (relevant to Figures 1A and S2C), or
 - draw a heatmap showing how the flavin fluorescence of multiple cells in an experiment changes over time (relevant to Figure 1E).
 
 The rest of the files are modules containing functions and variables used by the main plotting script.
