@@ -6,7 +6,7 @@ import seaborn as sns
 from matplotlib.backends.backend_pdf import PdfPages
 from yeast8model import Yeast8Model
 
-# "highglc", "glc_highratio", "highpyr", "pyrhighratio" : use that preset model
+# "highglc", "glchighratio", "highpyr", "pyrhighratio" : use that preset model
 # "all" : generate PDFs for all preset models
 # "custom" : use custom model, defined by model_options variable
 preset_model_options = "all"
@@ -197,4 +197,4 @@ elif preset_model_options == "all":
         drawplots(val)
 else:
     wt = Yeast8Model("ecYeastGEM_batch_8-6-0.xml")
-    drawplots(preset_models[model_options])
+    drawplots(preset_models[preset_model_options])
