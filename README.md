@@ -75,7 +75,7 @@ This directory requires these Python dependencies:
 
 Users will also need the ecYeast8.6.0 model, available at  [https://github.com/SysBioChalmers/ecModels/blob/update/ecYeastGEM/v8.6.0/2022-07-03-20-48-59/ecYeastGEM/model/ecYeastGEM_batch.xml].  Save this file as `ecYeastGEM_batch_8-6-0.xml` in the same directory as the Python scripts for the scripts to work.
 
-Users will also need flux data from [https://doi.org/10.7488/ds/7845], saved as `fluxes.tsv`.
+Users will also need flux data from [https://doi.org/10.7488/ds/7845], saved as `fluxes.tsv`.  This file can also be generated using `script_compare_enz_use.py`, which operates on the UNIPROT-derived lookup table `idmapping_2024_07_27.tsv`.
 
 ## Usage
 
