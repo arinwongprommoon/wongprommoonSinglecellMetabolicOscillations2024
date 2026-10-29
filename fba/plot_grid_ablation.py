@@ -3,9 +3,11 @@ import pickle
 
 import matplotlib.pyplot as plt
 import numpy as np
+
+from types import SimpleNamespace
+
 from matplotlib.backends.backend_pdf import PdfPages
 from ablation import vget_ablation_ratio
-from matrix import ArrayCollection
 from grid import heatmap_ablation_grid
 
 model_options = {
@@ -13,6 +15,29 @@ model_options = {
     # "carbon_source": "glc",
     "carbon_source": "pyr",
 }
+
+
+class ArrayCollection:
+    """2D array of values, with the exchange-rate-0 edge masked, and its gradient.
+
+    Attributes
+    ----------
+    array : 2d numpy.ndarray
+        Copy of the input, with the first row and first column (corresponding
+        to an exchange rate of 0) replaced with NaNs, because they are prone to
+        weird values.
+    gradient : SimpleNamespace
+        Gradients of `array` along axis 0 (`gradient.x`) and axis 1
+        (`gradient.y`).
+    """
+
+    def __init__(self, raw_array):
+        self.array = np.array(raw_array, dtype=float)
+        self.array[0, :] = np.nan
+        self.array[:, 0] = np.nan
+
+        grad_x, grad_y = np.gradient(self.array)
+        self.gradient = SimpleNamespace(x=grad_x, y=grad_y)
 
 
 @np.vectorize
@@ -30,7 +55,6 @@ if model_options["carbon_source"] == "glc":
     saturation_amm = 1.4848
     exch_rate_dict["r_1714"] = np.linspace(0, 2 * saturation_glc, 32)
     # plot options
-    x_axis = exch_rate_dict["r_1714"]
     saturation_carb = saturation_glc
     grid_xlabel_leader = "Glucose exchange"
 elif model_options["carbon_source"] == "pyr":
@@ -38,12 +62,10 @@ elif model_options["carbon_source"] == "pyr":
     saturation_amm = 1.0
     exch_rate_dict["r_2033"] = np.linspace(0, 2 * saturation_pyr, 32)
     # plot options
-    x_axis = exch_rate_dict["r_2033"]
     saturation_carb = saturation_pyr
     grid_xlabel_leader = "Pyruvate exchange"
 
 exch_rate_dict["r_1654"] = np.linspace(0, 2 * saturation_amm, 32)
-y_axis = exch_rate_dict["r_1654"]
 
 # Set up axes parameters
 grid_xlabel = f"{grid_xlabel_leader}\n (% growth rate saturation)"
@@ -57,9 +79,9 @@ with open(grid_filepath, "rb") as handle:
 
 # Compute data
 ratio_array = vget_ablation_ratio(ablation_result_array)
-ratio = ArrayCollection(ratio_array, x_axis, y_axis)
-log2ratio = ArrayCollection(np.log2(ratio_array), x_axis, y_axis)
-gr = ArrayCollection(vget_gr(ablation_result_array), x_axis, y_axis)
+ratio = ArrayCollection(ratio_array)
+log2ratio = ArrayCollection(np.log2(ratio_array))
+gr = ArrayCollection(vget_gr(ablation_result_array))
 
 # Masks
 ratio_array_mask = ratio.array > 1
