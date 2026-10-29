@@ -10,8 +10,8 @@ from grid import heatmap_ablation_grid
 
 model_options = {
     # "glc" or "pyr"
-    "carbon_source": "glc",
-    # "carbon_source": "pyr",
+    # "carbon_source": "glc",
+    "carbon_source": "pyr",
 }
 
 
@@ -57,7 +57,7 @@ with open(grid_filepath, "rb") as handle:
 
 # Compute data
 ratio_array = vget_ablation_ratio(ablation_result_array)
-log2ratio_array = np.log2(ratio_array)
+log2ratio = ArrayCollection(np.log2(ratio_array), x_axis, y_axis)
 gr = ArrayCollection(vget_gr(ablation_result_array), x_axis, y_axis)
 
 # Masks
@@ -75,7 +75,7 @@ fig, ax = plt.subplots()
 heatmap_ablation_grid(
     ax,
     exch_rate_dict,
-    log2ratio_array,
+    log2ratio.array,
     percent_saturation=True,
     saturation_point=(saturation_carb, saturation_amm),
     saturation_grid=True,
