@@ -1,69 +1,12 @@
-This repository contains the code used for the manuscript, "Single-cell metabolic oscillations are pervasive and may alleviate a proteome constraint", authored by Arin Wongprommoon, Alán F. Muñoz, Diego A. Oyarzún, and Peter S. Swain.
+This repository contains the code used for the manuscript, "Single-cell metabolic oscillations may alleviate a proteome constraint", authored by Arin Wongprommoon, Diego A. Oyarzún, and Peter S. Swain.
 
 # Directory structure
 
-This repository contains three directories:
+The code to reproduce figures is in the "fba" directory.
 
-- "timeseries" : Used for analysing and visualising time series.
-- "phase" : Used for analysing phases of time series.
-- "fba" : Used for flux balance analysis.
-
-# General requirements
+# Requirements
 
 The code has been tested on Python 3.8.
-
-# timeseries
-
-## Requirements
-
-This directory requires these Python dependencies:
-
-- `aliby` and its dependencies : documented on [https://pypi.org/project/aliby/], source code available at [https://gitlab.com/aliby/aliby]
-- `matplotlib`
-- `numpy`
-- `wela` and its dependencies : documented on [https://git.ecdf.ed.ac.uk/swain-lab/wela]
-
-Users will also need time-series data and classifications of time-series data from [https://doi.org/10.7488/ds/7845].
-
-## Usage
-
-The `strain_report.py` script from this directory can be adapted to:
-
-- draw a plot showing the fluorescence (flavin or mCherry) of a single cell over time, annotated with birth events (relevant to Figures 1A and S2C), or
-- draw a heatmap showing how the flavin fluorescence of multiple cells in an experiment changes over time (relevant to Figure 1E).
-
-The rest of the files are modules containing functions and variables used by the main plotting script.
-
-# phase
-
-## Requirements
-
-This directory requires these Python dependencies:
-
-- `astropy`
-- `colorcet`
-- `matplotlib`
-- `numpy`
-- `pandas`
-- `scipy`
-- `seaborn`
-- `wela` and its dependencies : documented on [https://git.ecdf.ed.ac.uk/swain-lab/wela]
-
-Users will also need time-series data and classifications of time-series data from [https://doi.org/10.7488/ds/7845].
-
-## Usage
-
-This directory produces plots relevant to Figures 1B-D, 2, S1, S2A-B, and S3-6.
-
-To draw all plots, run `python plot_phase.py`.  This script may be time-consuming -- allow approximately 20 minutes.  This script will produce a PDF file called `all_plots.pdf`.
-
-`data_dict.py` defines the list of datasets (time-series data and classification of time-series data) to be used for time series analysis and drawing plots.  For the code in this directory to work, these datasets must be in a "`tsv_data`" directory in the same working directory as the Python scripts.
-
-The rest of the files are modules containing functions and variables used by the main plotting script.
-
-# fba
-
-## Requirements
 
 This directory requires these Python dependencies:
 
@@ -79,15 +22,15 @@ Users will also need flux data from [https://doi.org/10.7488/ds/7845], saved as 
 
 ## Usage
 
-This directory produces plots relevant to Figures 3B-C and Figure 4.
+This directory produces plots relevant to Figures 1B-C and Figures 2A-2B.
 
-To draw the bar plots in Figure 3B, run `python plot_strains.py`.
+To draw the bar plots in Figure 1B, run `python plot_strains.py`.
 
-To draw the heatmap in Figure 3C, run `python plot_enzyme_usage.py`.
+To draw the heatmap in Figure 1C, run `python plot_enzyme_usage.py`.
 
-To draw the heatmaps in Figure 4A, first run `python grid_ablation.py` to run metabolic simulations and produce output *.pkl files.  This step may take several hours, or overnight.  Then run `python plot_grid_ablation.py` to draw the heatmaps.  Modify the `model_options` variable to switch between glucose and pyruvate as the carbon source.
+To draw the heatmaps in Figure 2A, first run `python grid_ablation.py` to run metabolic simulations and produce output *.pkl files.  This step may take several hours, or overnight.  Then run `python plot_grid_ablation.py` to draw the heatmaps.  Modify the `model_options` variable to switch between glucose and pyruvate as the carbon source.
 
-To draw the bar plots in Figure 4B, run `python plot_fluxes.py`.  This requires the `fluxes.tsv` from the DataStore and the list of electron transport chain enzymes, `etc_enzymes.txt`.
+To draw the bar plots in Figure 2B, run `python plot_fluxes.py`.  This requires the `fluxes.tsv` from the DataStore and the list of electron transport chain enzymes, `etc_enzymes.txt`.
 
 To obtain respiration and fermentation fluxes relevant to the section, "A constrained proteome usually favours sequential biosynthesis", run `python respiration_fermentation.py`.  The output file is `respiration_and_fermentation.csv`, with the columns:
 
