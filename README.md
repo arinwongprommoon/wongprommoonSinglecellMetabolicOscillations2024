@@ -28,7 +28,7 @@ To draw the bar plots in Figure 1B, run `python plot_strains.py`.
 
 To draw the heatmap in Figure 1C, run `python plot_enzyme_usage.py`.
 
-To draw the heatmaps in Figure 2A, first run `python grid_ablation.py` to run metabolic simulations and produce output *.pkl files.  This step may take several hours, or overnight.  Then run `python plot_grid_ablation.py` to draw the heatmaps.  Modify the `model_options` variable to switch between glucose and pyruvate as the carbon source.
+To draw the heatmaps in Figure 2A, first run `python grid_ablation.py` to run metabolic simulations and produce output *.pkl files.  This step may take several hours, or overnight, so the pkl files are included in this repo.  Then run `python plot_grid_ablation.py` to draw the heatmaps.  Modify the `model_options` variable to switch between glucose and pyruvate as the carbon source.
 
 To draw the bar plots in Figure 2B, run `python plot_fluxes.py`.  This requires the `fluxes.tsv` from the DataStore and the list of electron transport chain enzymes, `etc_enzymes.txt`.
 
