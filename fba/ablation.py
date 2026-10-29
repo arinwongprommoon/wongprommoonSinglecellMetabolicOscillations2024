@@ -27,7 +27,29 @@ def get_ablation_ratio(ablation_result):
     ablation_result = wt_ec.ablate()
     r = get_ablation_ratio(ablation_result)
     """
-    ratio, _ = _get_ablation_ratio_component(ablation_result)
+    # sum of times (ablated)
+    sum_of_times = ablation_result.loc[
+        ablation_result.priority_component != "original",
+        ablation_result.columns == "ablated_est_time",
+    ].sum()
+    # get element
+    sum_of_times = sum_of_times[0]
+
+    # largest proportional_est_time, apart from original.
+
+    # Creates reduced DataFrame that shows both priority_component and
+    # proportional_est_time because I want to take note which
+    # priority_component is max (in case it's not always the same).
+    proportional_est_time_red = ablation_result.loc[
+        ablation_result.priority_component != "original",
+        ["priority_component", "proportional_est_time"],
+    ]
+    largest_prop_df = proportional_est_time_red.loc[
+        proportional_est_time_red["proportional_est_time"].idxmax()
+    ]
+    largest_prop_time = largest_prop_df.proportional_est_time
+
+    ratio = sum_of_times / largest_prop_time
     return ratio
 
 
@@ -55,31 +77,3 @@ def vget_ablation_ratio(ablation_result_array):
     r = get_ablation_ratio(ablation_result)
     """
     return get_ablation_ratio(ablation_result_array)
-
-
-def _get_ablation_ratio_component(ablation_result):
-    # sum of times (ablated)
-    sum_of_times = ablation_result.loc[
-        ablation_result.priority_component != "original",
-        ablation_result.columns == "ablated_est_time",
-    ].sum()
-    # get element
-    sum_of_times = sum_of_times[0]
-
-    # largest proportional_est_time, apart from original.
-
-    # Creates reduced DataFrame that shows both priority_component and
-    # proportional_est_time because I want to take note which
-    # priority_component is max (in case it's not always the same).
-    proportional_est_time_red = ablation_result.loc[
-        ablation_result.priority_component != "original",
-        ["priority_component", "proportional_est_time"],
-    ]
-    largest_prop_df = proportional_est_time_red.loc[
-        proportional_est_time_red["proportional_est_time"].idxmax()
-    ]
-    largest_prop_time = largest_prop_df.proportional_est_time
-    largest_prop_component = largest_prop_df.priority_component
-
-    ratio = sum_of_times / largest_prop_time
-    return ratio, largest_prop_component
