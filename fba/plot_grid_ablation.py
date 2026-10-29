@@ -1,20 +1,24 @@
 #!/usr/bin/env python3
+#!/usr/bin/env python3
 import pickle
 
 import matplotlib.pyplot as plt
 import numpy as np
-
-from types import SimpleNamespace
-
+import seaborn as sns
 from matplotlib.backends.backend_pdf import PdfPages
 from ablation import vget_ablation_ratio
-from grid import heatmap_ablation_grid
+from types import SimpleNamespace
 
 model_options = {
     # "glc" or "pyr"
     # "carbon_source": "glc",
     "carbon_source": "pyr",
 }
+
+
+@np.vectorize
+def vget_gr(x):
+    return x.ablated_flux[0]
 
 
 class ArrayCollection:
@@ -40,36 +44,28 @@ class ArrayCollection:
         self.gradient = SimpleNamespace(x=grad_x, y=grad_y)
 
 
-@np.vectorize
-def vget_gr(x):
-    return x.ablated_flux[0]
-
-
 saturation_glc = 8.6869
 saturation_pyr = 4.4444
 
-exch_rate_dict = {}
-
 if model_options["carbon_source"] == "glc":
-    # build exch_rate_dict
     saturation_amm = 1.4848
-    exch_rate_dict["r_1714"] = np.linspace(0, 2 * saturation_glc, 32)
-    # plot options
+    # Exchange rates of glucose (r_1714)
+    x_axis = np.linspace(0, 2 * saturation_glc, 32)
     saturation_carb = saturation_glc
     grid_xlabel_leader = "Glucose exchange"
 elif model_options["carbon_source"] == "pyr":
-    # build exch_rate_dict
     saturation_amm = 1.0
-    exch_rate_dict["r_2033"] = np.linspace(0, 2 * saturation_pyr, 32)
-    # plot options
+    # Exchange rates of pyruvate (r_2033)
+    x_axis = np.linspace(0, 2 * saturation_pyr, 32)
     saturation_carb = saturation_pyr
     grid_xlabel_leader = "Pyruvate exchange"
 
-exch_rate_dict["r_1654"] = np.linspace(0, 2 * saturation_amm, 32)
+# Exchange rates of ammonium (r_1654)
+y_axis = np.linspace(0, 2 * saturation_amm, 32)
 
 # Set up axes parameters
 grid_xlabel = f"{grid_xlabel_leader}\n (% growth rate saturation)"
-grid_ylabel = f"Ammonium exchange\n (% growth rate saturation)"
+grid_ylabel = "Ammonium exchange\n (% growth rate saturation)"
 
 # Load saved data
 grid_filename = "ec_grid_" + model_options["carbon_source"] + "_amm"
@@ -90,22 +86,33 @@ ratio_array_mask = ratio.array > 1
 gr_x_mask = gr.gradient.x > 0.01
 gr_y_mask = gr.gradient.y > 0.01
 
+# Axis tick labels as percent of saturation. The y axis is drawn 'in reverse'.
+xticklabels = x_axis / saturation_carb * 100
+yticklabels = y_axis[::-1] / saturation_amm * 100
 
 # Draw the log2(ratio) heatmap with ratio and growth rate contours
 fig, ax = plt.subplots()
-heatmap_ablation_grid(
-    ax,
-    exch_rate_dict,
-    log2ratio.array,
-    percent_saturation=True,
-    saturation_point=(saturation_carb, saturation_amm),
-    saturation_grid=True,
+
+# Grid lines to show where saturation (100%) is. The y position is found on the
+# un-reversed axis to keep the line position consistent with the x axis.
+ax.axvline(np.searchsorted(xticklabels, 100, side="left"), color="k", linewidth=1)
+ax.axhline(
+    np.searchsorted(yticklabels[::-1], 100, side="right"), color="k", linewidth=1
+)
+
+# Rounding directly on the x/yticklabels variables because of known
+# matplotlib-seaborn bug:
+# - https://github.com/mwaskom/seaborn/issues/1005
+sns.heatmap(
+    data=np.rot90(log2ratio.array),
+    xticklabels=np.around(xticklabels, decimals=1),
+    yticklabels=np.around(yticklabels, decimals=1),
     vmin=-0.52,
     vmax=+0.27,
-    showticklabels=True,
     center=0,
     cmap="RdBu_r",
-    cbar_label=r"$\log_{2}(Ratio)$",
+    cbar_kws={"label": r"$\log_{2}(Ratio)$"},
+    ax=ax,
 )
 # Ratio contour (ratio > 1)
 ax.contour(np.rot90(ratio_array_mask), origin="lower", colors="k")
@@ -114,6 +121,9 @@ ax.contour(np.rot90(gr_x_mask), origin="lower", colors="C1", linestyles="dashed"
 ax.contour(np.rot90(gr_y_mask), origin="lower", colors="C2", linestyles="dashed")
 ax.set_xlabel(grid_xlabel)
 ax.set_ylabel(grid_ylabel)
+# Hide tick labels
+ax.set(xticklabels=[])
+ax.set(yticklabels=[])
 ax.set_title(r"$\log_{2}(Ratio)$")
 
 
