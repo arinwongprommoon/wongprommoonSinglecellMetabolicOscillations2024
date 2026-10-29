@@ -57,13 +57,12 @@ with open(grid_filepath, "rb") as handle:
 
 # Compute data
 ratio_array = vget_ablation_ratio(ablation_result_array)
+ratio = ArrayCollection(ratio_array, x_axis, y_axis)
 log2ratio = ArrayCollection(np.log2(ratio_array), x_axis, y_axis)
 gr = ArrayCollection(vget_gr(ablation_result_array), x_axis, y_axis)
 
 # Masks
-# ratio > 1 is equivalent to log2(ratio) > 0, so this contour is valid for the
-# log2ratio heatmap.
-ratio_mask = ratio_array > 1
+ratio_array_mask = ratio.array > 1
 # For growth rate gradients, non-zero as an 'epsilon' value to get sensible-
 # looking contours.
 gr_x_mask = gr.gradient.x > 0.01
@@ -87,7 +86,7 @@ heatmap_ablation_grid(
     cbar_label=r"$\log_{2}(Ratio)$",
 )
 # Ratio contour (ratio > 1)
-ax.contour(np.rot90(ratio_mask), origin="lower", colors="k")
+ax.contour(np.rot90(ratio_array_mask), origin="lower", colors="k")
 # Growth rate contours: carbon- and nitrogen-limiting regions
 ax.contour(np.rot90(gr_x_mask), origin="lower", colors="C1", linestyles="dashed")
 ax.contour(np.rot90(gr_y_mask), origin="lower", colors="C2", linestyles="dashed")
